@@ -4,6 +4,10 @@ import tkinter.messagebox as msg
 from Frames.AuthFrame import AuthFrame
 from Frames.MenuFrame import MenuFrame
 from Frames.QuizFrame import QuizFrame
+from Frames.ResultFrame import ResultFrame
+from Frames.AdminFrame import AdminFrame
+from Frames.UserManageFrame import UserManageFrame
+from Frames.QuizManageFrame import QuizManageFrame
 
 
 class App(tk.Tk):
@@ -27,11 +31,11 @@ class App(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
         
         self.frames = {}
-        for F in (AuthFrame, MenuFrame):
+        for F in (AuthFrame, MenuFrame, QuizFrame, ResultFrame, AdminFrame, UserManageFrame, QuizManageFrame):
             frame = F(container, self)
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.update({F: frame})
-        self.showFrame(MenuFrame)
+        self.showFrame(QuizManageFrame)
 
 
     # SHOW THE FRAME ON THE MAIN APP

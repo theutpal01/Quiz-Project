@@ -16,17 +16,17 @@ class MenuFrame(tk.Frame):
     
         rightFrame = tk.Frame(self, width=(WIN_W // 2), height=WIN_H, background=P_COL)
         headFrame = tk.Frame(rightFrame, background=P_COL)
-        demoBtn = tk.Button(headFrame, text="Give Demo Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
-        demoBtn.pack(padx=15, pady=15, anchor=tk.W)
-        demoBtn.bind('<Enter>', controller.hoverBtn)
-        demoBtn.bind('<Leave>', controller.unhoverBtn)
+        # demoBtn = tk.Button(headFrame, text="Give Demo Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
+        # demoBtn.pack(padx=15, pady=15, anchor=tk.W)
+        # demoBtn.bind('<Enter>', controller.hoverBtn)
+        # demoBtn.bind('<Leave>', controller.unhoverBtn)
     
-        testBtn = tk.Button(headFrame, text="Give Actual Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
+        testBtn = tk.Button(headFrame, text="Attempt The Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
         testBtn.pack(padx=15, pady=15, anchor=tk.W)
         testBtn.bind('<Enter>', controller.hoverBtn)
         testBtn.bind('<Leave>', controller.unhoverBtn)
     
-        resBtn = tk.Button(headFrame, text="Get Result", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
+        resBtn = tk.Button(headFrame, text="Get Your Result", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
         resBtn.pack(padx=15, pady=15, anchor=tk.W)
         resBtn.bind('<Enter>', controller.hoverBtn)
         resBtn.bind('<Leave>', controller.unhoverBtn)
