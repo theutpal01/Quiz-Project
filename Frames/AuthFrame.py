@@ -60,8 +60,27 @@ class AuthFrame(tk.Frame):
 
 
     def register(self, controller: tk.Tk):
-        pass
+        print("SIGN UP")
+        name, pwd = self.name.get(), self.pwd.get()
+
+        if len(name) !=0 and len(pwd) !=0:
+            
+            if " " in name and name.isalnum():
+                print("Username cannot contain space and should be only alpha numeric!")
+
+            
+            elif len(pwd) < 8 or len(pwd) > 20:
+                print("Password should be of 8 to 20 letters.")
+
+            else:
+                if name == "admin":
+                    print("SIGNED UP")
+                    info = controller.database.insertIntoAuthTable(AUTH_TABLE, (name, pwd), True)
+                    print(info)
+                else:
+                    info = controller.database.insertIntoAuthTable(AUTH_TABLE, (name, pwd))
+                    print(info)
 
 
     def login(self, controller: tk.Tk):
-        pass
+        name, pwd = self.name.get(), self.pwd.get()

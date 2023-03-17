@@ -22,3 +22,11 @@ FONT_SIZE_HEADING = 32
 FONT_SIZE = 17
 SM_FONT_SIZE = 15
 VSM_FONT_SIZE = 12
+
+
+# MYSQL CONFIGURATION
+HOST = "127.0.0.1"
+USER = "root"
+PWD = "Quiz@mysql1234"
+DB = "quiz_project"
+AUTH_TABLE, RESULT_TABLE, QUEST_TABLE = "auth", "result", "quest"

@@ -9,6 +9,8 @@ from Frames.AdminFrame import AdminFrame
 from Frames.UserManageFrame import UserManageFrame
 from Frames.QuizManageFrame import QuizManageFrame
 
+from database import Database
+
 
 class App(tk.Tk):
     def __init__(self):
@@ -23,7 +25,7 @@ class App(tk.Tk):
         self.bind("<Configure>", self.refresh)
         self.protocol("WM_DELETE_WINDOW", self.on_quit)
 
-        # self.initial()
+        self.initDB()
 
         container = tk.Frame(self)
         container.pack(fill="both", expand=True, padx=2, pady=2)
@@ -35,7 +37,18 @@ class App(tk.Tk):
             frame = F(container, self)
             frame.grid(row=0, column=0, sticky="nsew")
             self.frames.update({F: frame})
-        self.showFrame(QuizManageFrame)
+        self.showFrame(AuthFrame)
+
+
+    def initDB(self):
+        self.database = Database()
+        info = self.database.connect(HOST, USER, PWD, DB)
+
+        if info[0] == "Success":
+            info = self.database.initTables(AUTH_TABLE, RESULT_TABLE, QUEST_TABLE)
+            print(info[0] + ": " + info[1])
+        else:
+            print(info[0] + ": " + info[1])
 
 
     # SHOW THE FRAME ON THE MAIN APP
