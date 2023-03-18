@@ -1,5 +1,5 @@
 # WINDOWS CONFIGURATION
-WIN_W, WIN_H = 800, 500
+WIN_W, WIN_H = 900, 600
 WIN_T = "Quiz Application"
 
 
@@ -29,4 +29,4 @@ HOST = "127.0.0.1"
 USER = "root"
 PWD = "Quiz@mysql1234"
 DB = "quiz_project"
-AUTH_TABLE, RESULT_TABLE, QUEST_TABLE = "auth", "result", "quest"
+AUTH_TABLE, RESULT_TABLE, QUIZ_TABLE = "auth", "result", "quiz"
