@@ -102,11 +102,15 @@ class Database:
             return ("Error", error)
         
 
-    def saveQuests(self, tbName:str, values:tuple):
+    def saveQuests(self, tbName:str, values:tuple, multiple:bool=False):
         try:
-            self.query.execute(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
+            if multiple:
+                self.query.executemany(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
+            else:
+                self.query.execute(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
+            
             self.myDB.commit()
-            return ("Success", "Record inserted, ID:" + str(self.query.lastrowid))
+            return ("Success", "Total Record inserted: " + str(self.query.rowcount))
 
         except sql.Error as error:
             return ("Error", error)
@@ -114,8 +118,9 @@ class Database:
 
     def delQuestByName(self, tbName:str, qname:str):
         try:
-            self.query.execute(f"DELETE FROM {tbName} WHERE qname = {qname}")
-            return ("Success", "Record deleted, ID:" + str(self.query.lastrowid))
+            self.query.execute(f"DELETE FROM {tbName} WHERE qname = %s", (qname,))
+            self.myDB.commit()
+            return ("Success", "Total Record deleted: " + str(self.query.rowcount))
 
         except sql.Error as error:
             return ("Error", error)

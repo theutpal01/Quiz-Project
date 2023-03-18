@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 from constants import *
 
 
@@ -90,7 +91,7 @@ class QuizManageFrame(tk.Frame):
         backBtn.bind('<Leave>', controller.unhoverBtn)
         submitFrame.pack(pady=(30, 0))
 
-        self.multiSaveBtn = tk.Button(rightFrame, text="Save Multiple Questions", font=(FONT_FAM, VSM_FONT_SIZE), width=46, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
+        self.multiSaveBtn = tk.Button(rightFrame, text="Save Multiple Questions", font=(FONT_FAM, VSM_FONT_SIZE), width=46, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, command=lambda: self.saveMultiple(controller))
         self.multiSaveBtn.pack(padx=5, pady=5)
         self.multiSaveBtn.bind('<Enter>', controller.hoverBtn)
         self.multiSaveBtn.bind('<Leave>', controller.unhoverBtn)
@@ -126,9 +127,7 @@ class QuizManageFrame(tk.Frame):
     def setData(self):
         self.update_idletasks()
         self.listView.delete(0, tk.END)
-        print(QuizManageFrame.quests)
         for i, quest in QuizManageFrame.quests:
-            print(i, quest)
             self.listView.insert(i, " " + str(i + 1) + ". " + self.formatText(quest, 46))
 
 
@@ -186,7 +185,21 @@ class QuizManageFrame(tk.Frame):
         selected = selected[0] if len(selected) != 0 else None
 
         if selected is not None:
-            qName = itms[selected][4:]
+            qName = QuizManageFrame.quests[selected][1]
             info = controller.database.delQuestByName(QUIZ_TABLE, qName)
-            print(info)
+            print(qName, info)
+            if info[0] == "Success":
+                print("The question haas been deleted successfully!")
+            else:
+                print("Something went wrong! Please restart the program.")
             controller.showQuizDetails()
+
+
+    def saveMultiple(self, controller: tk.Tk):
+        file = filedialog.askopenfilename(title='Open a file', initialdir='', filetypes=(("Only text files", "*.txt"),))
+        text = None
+        with open(file, "r") as f:
+            text = f.readline()
+
+        values = eval(text)
+        controller.saveQuestMultiple(values)

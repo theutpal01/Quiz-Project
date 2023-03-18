@@ -110,7 +110,7 @@ class App(tk.Tk):
 
     def register(self):
         print("SIGN UP")
-        name, pwd = self.frames.get(AuthFrame).name.get(), self.frames.get(AuthFrame).pwd.get()
+        name, pwd = self.frames.get("auth").name.get(), self.frames.get("auth").pwd.get()
 
         if len(name) !=0 and len(pwd) !=0:
             
@@ -134,17 +134,17 @@ class App(tk.Tk):
                 if info[0] == "Error":
                     if info[1][0] == 1062:
                         print("Username already taken! Please use a different username.")
-                        self.frames.get(AuthFrame).pwd.set("")
+                        self.frames.get("auth").pwd.set("")
                     else:
                         print("Something went wrong! Please try again.")
                 else:
-                    self.frames.get(AuthFrame).name.set("")
-                    self.frames.get(AuthFrame).pwd.set("")
+                    self.frames.get("auth").name.set("")
+                    self.frames.get("auth").pwd.set("")
                     print("Registered successfully! Login to continue.")
 
 
     def login(self):
-        name, pwd = self.frames.get(AuthFrame).name.get(), self.frames.get(AuthFrame).pwd.get()
+        name, pwd = self.frames.get("auth").name.get(), self.frames.get("auth").pwd.get()
 
         if len(name) !=0 and len(pwd) !=0:
             info = self.database.getFromAuthTable(AUTH_TABLE, name, pwd)
@@ -159,12 +159,12 @@ class App(tk.Tk):
                     print("You have successfully logged in! You will be redirected to Main Menu")
                     self.showFrame("menu")
                 
-                self.frames.get(AuthFrame).name.set("")
-                self.frames.get(AuthFrame).pwd.set("")
+                self.frames.get("auth").name.set("")
+                self.frames.get("auth").pwd.set("")
             
             elif info[0] == "Warn":
                 print(info[1])
-                self.frames.get(AuthFrame).pwd.set("")
+                self.frames.get("auth").pwd.set("")
 
             else:
                 print("Something went wrong! Please try again.")
@@ -210,6 +210,22 @@ class App(tk.Tk):
             info = self.database.saveQuests(QUIZ_TABLE, data)
             print(info)
             self.showQuizDetails()
+
+    
+    def saveQuestMultiple(self, values):
+        canSave = True
+        for value in values:
+            for i in value:
+                if len(i) == 0 or i.isspace():
+                    canSave = False
+
+        if canSave:
+            info = self.database.saveQuests(QUIZ_TABLE, values, True)
+            if info[0] == "Success":
+                print("Successfully added all the questions.")
+                self.showQuizDetails()
+            else:
+                print("Something went wrong! Please restart the program.")
 
 
 def main():

@@ -25,8 +25,8 @@ VSM_FONT_SIZE = 12
 
 
 # MYSQL CONFIGURATION
-HOST = "127.0.0.1"
-USER = "root"
-PWD = "Quiz@mysql1234"
+HOST = "localhost"
+USER = "reaper"
+PWD = "Reaper@mysql1234"
 DB = "quiz_project"
 AUTH_TABLE, RESULT_TABLE, QUIZ_TABLE = "auth", "result", "quiz"
