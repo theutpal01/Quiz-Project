@@ -1,6 +1,7 @@
 from constants import *
 import tkinter as tk
 import tkinter.messagebox as msg
+import json
 from Frames.AuthFrame import AuthFrame
 from Frames.MenuFrame import MenuFrame
 from Frames.QuizFrame import QuizFrame
@@ -13,6 +14,8 @@ from database import Database
 
 
 class App(tk.Tk):
+    name = None
+
     def __init__(self):
         tk.Tk.__init__(self)
 
@@ -41,6 +44,7 @@ class App(tk.Tk):
         
         self.frames = {}
         self.initFrames(container)
+        self.showFrame("auth")
 
 
     def initFrames(self, container):
@@ -66,7 +70,6 @@ class App(tk.Tk):
         qManage.grid(row=0, column=0, sticky="nsew")
 
         self.frames.update({"auth": auth, "menu": menu, "quiz": quiz, "result": result, "admin": admin, "uManage": uManage, "qManage": qManage})
-        self.showFrame("admin")
 
 
     def initDB(self):
@@ -108,6 +111,7 @@ class App(tk.Tk):
             self.destroy()
 
 
+    # ================= AUTH FUNCTIONS ======================= #
     def register(self):
         print("SIGN UP")
         name, pwd = self.frames.get("auth").name.get(), self.frames.get("auth").pwd.get()
@@ -161,6 +165,7 @@ class App(tk.Tk):
                 
                 self.frames.get("auth").name.set("")
                 self.frames.get("auth").pwd.set("")
+                App.name = name
             
             elif info[0] == "Warn":
                 print(info[1])
@@ -170,6 +175,12 @@ class App(tk.Tk):
                 print("Something went wrong! Please try again.")
 
 
+    def logout(self):
+        App.name = None
+        self.showFrame("auth")
+
+
+    # ================= ADMIN FUNCTIONS ======================= #
     def showUserDetails(self):
         info = self.database.fetchUsers(RESULT_TABLE)
         
@@ -200,7 +211,6 @@ class App(tk.Tk):
 
 
     def saveQuest(self, data):
-
         canSave = True
         for i in data:
             if len(i) == 0 or i.isspace():
@@ -226,6 +236,45 @@ class App(tk.Tk):
                 self.showQuizDetails()
             else:
                 print("Something went wrong! Please restart the program.")
+
+
+    # ================= USER FUNCTIONS ======================= #
+    def playQuiz(self):
+        info = self.database.fetchQuests(QUIZ_TABLE)
+
+        if info[0] == "Error":
+            print("Something went wrong! Please restart the program.")
+
+        else:
+            info = info[1]
+            info = tuple(enumerate(info)) if len(info) != 0 else ()
+            if len(info) != 0:
+                QuizFrame.initData(self.frames.get("quiz"), info)
+                self.showFrame("quiz")
+            else:
+                print("No Quiz for the time being.")
+
+    
+    def quizComplete(self, answers:dict, score:str, percent:str, grade:str):
+        answers = json.dumps(answers)
+        info = self.database.insertIntoResultTable(RESULT_TABLE, (App.name, answers, grade, score, percent))
+        self.showFrame("menu")
+        print(info)
+
+
+    def showResult(self):
+        info = self.database.fetchUsers(RESULT_TABLE, App.name)
+        
+        if info[0] == "Error":
+            print("Something went wrong! Please restart the program.")
+
+        elif info[0] == "Warn":
+            print(info[1])
+
+        else:
+            info = info[1][0]
+            ResultFrame.initData(self.frames.get("result"), info)
+            self.showFrame("result")
 
 
 def main():

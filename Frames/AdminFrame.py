@@ -29,7 +29,7 @@ class AdminFrame(tk.Frame):
         questBtn.bind('<Enter>', controller.hoverBtn)
         questBtn.bind('<Leave>', controller.unhoverBtn)
     
-        logoutBtn = tk.Button(headFrame, text="Logout Quiz App", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=25, command=lambda : controller.showFrame("auth")) 
+        logoutBtn = tk.Button(headFrame, text="Logout Quiz App", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=25, command=controller.logout)
         logoutBtn.pack(padx=15, pady=15, anchor=tk.W)
         logoutBtn.bind('<Enter>', controller.hoverBtn)
         logoutBtn.bind('<Leave>', controller.unhoverBtn)

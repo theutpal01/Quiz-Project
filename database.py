@@ -1,6 +1,5 @@
 import mysql.connector as sql
 
-
 class Database:
     def __init__(self):
         self.myDB = None
@@ -45,7 +44,7 @@ class Database:
 
 
             if resultTable not in allTables:
-                self.query.execute(f"CREATE TABLE {resultTable} (id INT(5) NOT NULL AUTO_INCREMENT, name VARCHAR(50) NULL, answers LONGTEXT NULL, grade VARCHAR(1) NULL, score VARCHAR(10) NULL, percent VARCHAR(20) NULL, createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id), UNIQUE (name(50)))")
+                self.query.execute(f"CREATE TABLE {resultTable} (id INT(5) NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, answers JSON NOT NULL, grade VARCHAR(2) NOT NULL, score VARCHAR(10) NOT NULL, percent VARCHAR(20) NOT NULL, createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, updatedAt TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id), UNIQUE (name(50)))")
 
 
             if quizTable not in allTables:
@@ -79,9 +78,12 @@ class Database:
             return ("Error", error)
         
 
-    def fetchUsers(self, tbName:str):
-        try:                        
-            self.query.execute(f"SELECT name, answers, grade, score, percent FROM {tbName}")
+    def fetchUsers(self, tbName:str, name:str=None):
+        try:
+            if name is None:
+                self.query.execute(f"SELECT name, answers, grade, score, percent FROM {tbName}")
+            else:
+                self.query.execute(f"SELECT name, answers, grade, score, percent FROM {tbName} WHERE name = %s", (name,))
             data = self.query.fetchall()
 
             if len(data) == 0:
@@ -121,6 +123,16 @@ class Database:
             self.query.execute(f"DELETE FROM {tbName} WHERE qname = %s", (qname,))
             self.myDB.commit()
             return ("Success", "Total Record deleted: " + str(self.query.rowcount))
+
+        except sql.Error as error:
+            return ("Error", error)
+        
+
+    def insertIntoResultTable(self, tbName:str, values):
+        try:
+            self.query.execute(f"INSERT INTO {tbName} (name, answers, grade, score, percent) VALUES (%s, %s, %s, %s, %s)", values)
+            self.myDB.commit()
+            return ("Success", "Total Record inserted: " + str(self.query.rowcount))
 
         except sql.Error as error:
             return ("Error", error)
