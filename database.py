@@ -56,7 +56,7 @@ class Database:
             return ("Error", error)
 
 
-
+    # ========================== INSERT QUERIES ============================ #
     def insertIntoAuthTable(self, tableName:str, values:tuple, admin:bool=False):
         try:
             self.query.execute(f"INSERT INTO {tableName} (name, password) VALUES (%s, %s)", values) if not admin else self.query.execute(f"INSERT INTO {tableName} (name, password, type) VALUES (%s, %s, %s)", (values[0], values[1], "admin"))
@@ -68,9 +68,47 @@ class Database:
             return ("Error", (error.errno, error.msg))
 
 
+    def insertIntoResultTable(self, tbName:str, values):
+        try:
+            self.query.execute(f"INSERT INTO {tbName} (name, answers, grade, score, percent) VALUES (%s, %s, %s, %s, %s)", values)
+            self.myDB.commit()
+            return ("Success", "Total Record inserted: " + str(self.query.rowcount))
+
+        except sql.Error as error:
+            return ("Error", error)
+
+
+    def saveQuests(self, tbName:str, values:tuple, multiple:bool=False):
+        try:
+            if multiple:
+                self.query.executemany(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
+            else:
+                self.query.execute(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
+            
+            self.myDB.commit()
+            return ("Success", "Total Record inserted: " + str(self.query.rowcount))
+
+        except sql.Error as error:
+            return ("Error", error)
+
+
+
+    # ========================== UPDATE QUERIES ============================ #
+    def updateAttempt(self, tbName:str, value:str, name:str):
+        try:
+            self.query.execute(f"UPDATE {tbName} SET attempted = %s WHERE name = %s", (value, name))
+            self.myDB.commit()
+            return ("Success", "You cannot attempt the quiz anymore.")
+        
+        except sql.Error as error:
+            return ("Error", error)
+
+
+
+    # ========================== SELECT QUERIES ============================ #
     def getFromAuthTable(self, tbName:str, name:str, pwd:str):
         try:
-            self.query.execute(f"SELECT name, type FROM {tbName} WHERE name = %s AND password = %s", (name, pwd))
+            self.query.execute(f"SELECT name, type, attempted FROM {tbName} WHERE BINARY name = BINARY %s AND BINARY password = BINARY %s", (name, pwd))
             res = self.query.fetchall()
             return ("Success", res[0]) if len(res) == 1 else ("Warn", "Invalid credentials!")
         
@@ -83,7 +121,7 @@ class Database:
             if name is None:
                 self.query.execute(f"SELECT name, answers, grade, score, percent FROM {tbName}")
             else:
-                self.query.execute(f"SELECT name, answers, grade, score, percent FROM {tbName} WHERE name = %s", (name,))
+                self.query.execute(f"SELECT name, answers, grade, score, percent FROM {tbName} WHERE BINARY name = BINARY %s", (name,))
             data = self.query.fetchall()
 
             if len(data) == 0:
@@ -102,41 +140,19 @@ class Database:
 
         except sql.Error as error:
             return ("Error", error)
-        
 
-    def saveQuests(self, tbName:str, values:tuple, multiple:bool=False):
-        try:
-            if multiple:
-                self.query.executemany(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
-            else:
-                self.query.execute(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
-            
-            self.myDB.commit()
-            return ("Success", "Total Record inserted: " + str(self.query.rowcount))
 
-        except sql.Error as error:
-            return ("Error", error)
-        
 
+    # ========================== DELETE QUERIES ============================ #
     def delQuestByName(self, tbName:str, qname:str):
         try:
-            self.query.execute(f"DELETE FROM {tbName} WHERE qname = %s", (qname,))
+            self.query.execute(f"DELETE FROM {tbName} WHERE BINARY qname = BINARY %s", (qname,))
             self.myDB.commit()
             return ("Success", "Total Record deleted: " + str(self.query.rowcount))
 
         except sql.Error as error:
             return ("Error", error)
         
-
-    def insertIntoResultTable(self, tbName:str, values):
-        try:
-            self.query.execute(f"INSERT INTO {tbName} (name, answers, grade, score, percent) VALUES (%s, %s, %s, %s, %s)", values)
-            self.myDB.commit()
-            return ("Success", "Total Record inserted: " + str(self.query.rowcount))
-
-        except sql.Error as error:
-            return ("Error", error)
-
 
     
     def disconnect(self):

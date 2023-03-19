@@ -161,6 +161,8 @@ class App(tk.Tk):
 
                 elif info[1][1] == "user":
                     print("You have successfully logged in! You will be redirected to Main Menu")
+                    print(info[1][2], type(info[1][2]))
+                    MenuFrame.initData(info[1][2])
                     self.showFrame("menu")
                 
                 self.frames.get("auth").name.set("")
@@ -239,27 +241,40 @@ class App(tk.Tk):
 
 
     # ================= USER FUNCTIONS ======================= #
-    def playQuiz(self):
-        info = self.database.fetchQuests(QUIZ_TABLE)
+    def playQuiz(self, attempted:int):
+        print(attempted)
+        if attempted == 0:
+            info = self.database.fetchQuests(QUIZ_TABLE)
 
-        if info[0] == "Error":
-            print("Something went wrong! Please restart the program.")
+            if info[0] == "Error":
+                print("Something went wrong! Please restart the program.")
 
-        else:
-            info = info[1]
-            info = tuple(enumerate(info)) if len(info) != 0 else ()
-            if len(info) != 0:
-                QuizFrame.initData(self.frames.get("quiz"), info)
-                self.showFrame("quiz")
             else:
-                print("No Quiz for the time being.")
+                info = info[1]
+                info = tuple(enumerate(info)) if len(info) != 0 else ()
+                if len(info) != 0:
+                    QuizFrame.initData(self.frames.get("quiz"), info)
+                    self.showFrame("quiz")
+                else:
+                    print("No Quiz for the time being.")
+        else:
+            print("You have already given the quiz.")
 
     
     def quizComplete(self, answers:dict, score:str, percent:str, grade:str):
         answers = json.dumps(answers)
         info = self.database.insertIntoResultTable(RESULT_TABLE, (App.name, answers, grade, score, percent))
-        self.showFrame("menu")
         print(info)
+        if info[0] == "Success":
+            info = self.database.updateAttempt(AUTH_TABLE, 1, App.name)
+
+            if info[0] == "Success":
+                MenuFrame.initData(1)
+                self.showFrame("menu")
+                print(info[1])
+        
+        else:
+            print("Something went wrong! Please restart the program")
 
 
     def showResult(self):

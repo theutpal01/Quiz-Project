@@ -3,6 +3,8 @@ from constants import *
 
 
 class MenuFrame(tk.Frame):
+    attempted = None
+
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
         self.configure(background=P_COL)        
@@ -21,7 +23,7 @@ class MenuFrame(tk.Frame):
         # demoBtn.bind('<Enter>', controller.hoverBtn)
         # demoBtn.bind('<Leave>', controller.unhoverBtn)
     
-        testBtn = tk.Button(headFrame, text="Attempt The Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20, command=controller.playQuiz)
+        testBtn = tk.Button(headFrame, text="Attempt The Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20, command=lambda: controller.playQuiz(MenuFrame.attempted))
         testBtn.pack(padx=15, pady=15, anchor=tk.W)
         testBtn.bind('<Enter>', controller.hoverBtn)
         testBtn.bind('<Leave>', controller.unhoverBtn)
@@ -38,5 +40,7 @@ class MenuFrame(tk.Frame):
         headFrame.pack()
         rightFrame.pack(side=tk.RIGHT, ipadx=10, ipady=10)
 
-
-
+    @classmethod
+    def initData(cls, data:int):
+        cls.attempted = data
+        print(cls.attempted)
