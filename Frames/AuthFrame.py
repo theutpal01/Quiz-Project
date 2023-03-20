@@ -47,12 +47,12 @@ class AuthFrame(tk.Frame):
         inputFrame.pack(pady=5)
 
         submitFrame = tk.Frame(rightFrame, padx=10, background=P_COL)
-        register = tk.Button(submitFrame, text="Sign Up", font=(FONT_FAM, FONT_SIZE), width=11, pady=5, command=lambda: controller.register(), background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
+        register = tk.Button(submitFrame, text="Sign Up", font=(FONT_FAM, SM_FONT_SIZE), width=11, pady=5, command=lambda: controller.register(), background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
         register.pack(side=tk.LEFT, padx=5, pady=5)
         register.bind('<Enter>', controller.hoverBtn)
         register.bind('<Leave>', controller.unhoverBtn)
 
-        login = tk.Button(submitFrame, text="Sign In", font=(FONT_FAM, FONT_SIZE), width=11, pady=5, command=lambda: controller.login(), background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
+        login = tk.Button(submitFrame, text="Sign In", font=(FONT_FAM, SM_FONT_SIZE), width=11, pady=5, command=lambda: controller.login(), background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
         login.pack(side=tk.RIGHT, padx=5, pady=5)
         login.bind('<Enter>', controller.hoverBtn)
         login.bind('<Leave>', controller.unhoverBtn)

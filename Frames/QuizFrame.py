@@ -66,12 +66,13 @@ class QuizFrame(tk.Frame):
 
 
     def updateIndex(self, event):
-        if event.widget["text"] == "<" and QuizFrame.index > 0:
-            QuizFrame.index -= 1
-        elif event.widget["text"] == ">" and QuizFrame.index < QuizFrame.maxLen:
-            QuizFrame.index += 1
-        self.answer.set("    ")
-        self.setData(QuizFrame.data[QuizFrame.index][1])
+        if event.widget['state'] == "active":
+            if event.widget["text"] == "<" and QuizFrame.index > 0:
+                QuizFrame.index -= 1
+            elif event.widget["text"] == ">" and QuizFrame.index < QuizFrame.maxLen:
+                QuizFrame.index += 1
+            self.answer.set("    ")
+            self.setData(QuizFrame.data[QuizFrame.index][1])
 
 
     def updateAnswer(self):
@@ -142,10 +143,10 @@ class QuizFrame(tk.Frame):
         percentage = str(percentage) + "%"
 
         if len(QuizFrame.uAnswers) < len(QuizFrame.data):
-            print("All the questions are not answered! Do you wish to continue?")
-            controller.quizComplete(QuizFrame.uAnswers, score, percentage, grade)
+            if controller.box.showYesNoBox("Want to continue?", "All the questions are not answered! Do you wish to continue?"):
+                controller.quizComplete(QuizFrame.uAnswers, score, percentage, grade)
         else:
-            print("All the questions are answered! Quiz has been submitted.")
+            controller.box.showBox("Info", "All the questions are answered! Quiz has been submitted.", "i")
             controller.quizComplete(QuizFrame.uAnswers, score, percentage, grade)
 
 

@@ -18,10 +18,6 @@ class MenuFrame(tk.Frame):
     
         rightFrame = tk.Frame(self, width=(WIN_W // 2), height=WIN_H, background=P_COL)
         headFrame = tk.Frame(rightFrame, background=P_COL)
-        # demoBtn = tk.Button(headFrame, text="Give Demo Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20)
-        # demoBtn.pack(padx=15, pady=15, anchor=tk.W)
-        # demoBtn.bind('<Enter>', controller.hoverBtn)
-        # demoBtn.bind('<Leave>', controller.unhoverBtn)
     
         testBtn = tk.Button(headFrame, text="Attempt The Test", font=(FONT_FAM, FONT_SIZE), padx=10, pady=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=20, command=lambda: controller.playQuiz(MenuFrame.attempted))
         testBtn.pack(padx=15, pady=15, anchor=tk.W)
@@ -43,4 +39,3 @@ class MenuFrame(tk.Frame):
     @classmethod
     def initData(cls, data:int):
         cls.attempted = data
-        print(cls.attempted)

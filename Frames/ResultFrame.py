@@ -8,6 +8,7 @@ class ResultFrame(tk.Frame):
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
         self.configure(background=P_COL)
+        self.COMPARING = False
         self.userVar = tk.StringVar(self, None)
         self.gradeVar = tk.StringVar(self, None)
         self.scoreVar = tk.StringVar(self, None)
@@ -62,6 +63,7 @@ class ResultFrame(tk.Frame):
         backBtn.bind('<Leave>', controller.unhoverBtn)
         submitFrame.place(in_=rightFrame, anchor=tk.CENTER, relx=0.5, rely=0.8)  
         rightFrame.pack(side=tk.RIGHT, ipadx=10, ipady=10)
+        compareBtn.config(command=lambda: self.compare(controller, (compareBtn, backBtn)))
 
 
     @classmethod
@@ -75,3 +77,13 @@ class ResultFrame(tk.Frame):
         self.gradeVar.set(ResultFrame.data[2])
         self.scoreVar.set(ResultFrame.data[3])
         self.percentVar.set(ResultFrame.data[4])
+
+
+    def compare(self, controller, btns):
+        if not self.COMPARING:
+            self.COMPARING = True
+
+            for btn in btns:
+                btn.config(state=tk.DISABLED)
+
+            controller.compareWin(self, controller, self.userVar.get(), btns)

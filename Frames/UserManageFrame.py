@@ -10,6 +10,7 @@ class UserManageFrame(tk.Frame):
     def __init__(self, parent: tk.Frame, controller: tk.Tk):
         tk.Frame.__init__(self, parent)
         self.configure(background=P_COL)
+        self.COMPARING = False
         self.userVar = tk.StringVar(self, None)
         self.gradeVar = tk.StringVar(self, None)
         self.scoreVar = tk.StringVar(self, None)
@@ -43,10 +44,10 @@ class UserManageFrame(tk.Frame):
         self.grade = tk.Label(leftFrame, textvariable=self.gradeVar, font=(FONT_FAM, GRADE_FONT), background=BLACK, foreground=TXT_COL)
         self.grade.place(in_=leftFrame, relx=0.5, rely=0.36, anchor=tk.CENTER)
 
-        self.submitBtn = tk.Button(leftFrame, text="Delete User", font=(FONT_FAM, SM_FONT_SIZE), command=lambda: self.delUser(controller), padx=15, pady=8, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=15)
-        self.submitBtn.place(in_=leftFrame, relx=0.5, rely=0.85, anchor=tk.CENTER)
-        self.submitBtn.bind('<Enter>', controller.hoverBtn)
-        self.submitBtn.bind('<Leave>', controller.unhoverBtn)
+        self.delBtn = tk.Button(leftFrame, text="Delete User", font=(FONT_FAM, SM_FONT_SIZE), padx=15, pady=8, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0, width=15, command=lambda: controller.delUserRes(RESULT_TABLE, self.userVar.get(), 0))
+        self.delBtn.place(in_=leftFrame, relx=0.5, rely=0.85, anchor=tk.CENTER)
+        self.delBtn.bind('<Enter>', controller.hoverBtn)
+        self.delBtn.bind('<Leave>', controller.unhoverBtn)
         leftFrame.pack(side=tk.LEFT, anchor=tk.S, ipadx=10, ipady=10)
 
     
@@ -89,6 +90,7 @@ class UserManageFrame(tk.Frame):
         backBtn.bind('<Leave>', controller.unhoverBtn)
         submitFrame.place(in_=rightFrame, anchor=tk.CENTER, relx=0.5, rely=0.8)  
         rightFrame.pack(side=tk.RIGHT, anchor=tk.S, ipadx=10, ipady=10)
+        compareBtn.config(command=lambda: self.compare(controller, (prevBtn, nextBtn, self.delBtn, compareBtn, backBtn)))
 
 
     @classmethod
@@ -100,11 +102,12 @@ class UserManageFrame(tk.Frame):
 
 
     def updateIndex(self, event):
-        if event.widget["text"] == "<" and UserManageFrame.index > 0:
-            UserManageFrame.index -= 1
-        elif event.widget["text"] == ">" and UserManageFrame.index < UserManageFrame.maxLen:
-            UserManageFrame.index += 1
-        self.setData()
+        if event.widget['state'] == "active":
+            if event.widget["text"] == "<" and UserManageFrame.index > 0:
+                UserManageFrame.index -= 1
+            elif event.widget["text"] == ">" and UserManageFrame.index < UserManageFrame.maxLen:
+                UserManageFrame.index += 1
+            self.setData()
 
 
     def setData(self):
@@ -116,3 +119,13 @@ class UserManageFrame(tk.Frame):
                 self.percentVar.set(entry[4])
 
         self.update_idletasks()
+
+
+    def compare(self, controller, btns):
+        if not self.COMPARING:
+            self.COMPARING = True
+
+            for btn in btns:
+                btn.config(state=tk.DISABLED)
+
+            controller.compareWin(self, controller, self.userVar.get(), btns)

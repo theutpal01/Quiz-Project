@@ -1,0 +1,8 @@
+32 bit operations were introduced for the first time by Microsoft in? %S% Windows 9.5 %S% Windows 3.0 %S% Windows 3.11 %S% None of the above %S% Windows 3.11
+Which of the following is a Text-based user interface? %S% GNOME %S% KDE %S% Aqua %S% Command-line interface %S% Command-line interface
+In which computer was magnetic core memory first demonstrated? %S% Manchester baby %S% Ferranti I %S% IBM 650 %S% Whirlwind Computer %S% Whirlwind Computer
+What are four basic functional elements of a digital computer %S% Input-Output Equipment %S% Main Memory %S% Control Unit and ALU %S% All of the above %S% All of the above
+Who among the following is most likely to operate a personal computer %S% End-user %S% Technician %S% Software Engineer %S% All of the above %S% End-user
+What is the maximum limit of data a Compact Disc can store up to? %S% 550 MB %S% 1000 MB %S% 750 MB %S% 1500 MB %S% 750 MB
+What is the full form of HVD? %S% Hydraulic Video Disk %S% Halogenated Versatile Disk %S% Holographic Versatile Disc %S% Hyper Video Disk %S% Holographic Versatile Disc
+Which of the following is used as an application programming interface with RDBMS? %S% VB %S% COBOL %S% SQL %S% All of the Above %S% SQL

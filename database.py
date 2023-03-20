@@ -1,17 +1,21 @@
 import mysql.connector as sql
 
 class Database:
-    def __init__(self):
+    def __init__(self, host:str, user:str, pwd:str, db:str):
+        self.host = host
+        self.user = user
+        self.password = pwd
+        self.db = db
         self.myDB = None
         self.query = None
 
 
-    def connect(self, host, user:str, pwd:str, db:str):
+    def connect(self):
         try:
             self.myDB = sql.connect(
-                host = host,
-                user = user,
-                password = pwd
+                host = self.host,
+                user = self.user,
+                password = self.password
             )
 
             self.query = self.myDB.cursor()
@@ -20,9 +24,9 @@ class Database:
             for i in self.query:
                 dbs.append(i[0])
 
-            if db not in dbs:
-                self.query.execute(f"CREATE DATABASE {db}")
-            self.myDB.database = db
+            if self.db not in dbs:
+                self.query.execute(f"CREATE DATABASE {self.db}")
+            self.myDB.database = self.db
 
             return ("Success", "Connected to the database successlully!")
         except sql.Error as error:
@@ -84,7 +88,6 @@ class Database:
                 self.query.executemany(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
             else:
                 self.query.execute(f"INSERT INTO {tbName} (qname, option1, option2, option3, option4, answer) VALUES (%s, %s, %s, %s, %s, %s)", values)
-            
             self.myDB.commit()
             return ("Success", "Total Record inserted: " + str(self.query.rowcount))
 
@@ -96,9 +99,19 @@ class Database:
     # ========================== UPDATE QUERIES ============================ #
     def updateAttempt(self, tbName:str, value:str, name:str):
         try:
-            self.query.execute(f"UPDATE {tbName} SET attempted = %s WHERE name = %s", (value, name))
+            self.query.execute(f"UPDATE {tbName} SET attempted = %s WHERE BINARY name = BINARY %s", (value, name))
             self.myDB.commit()
-            return ("Success", "You cannot attempt the quiz anymore.")
+            return ("Success", "Status updated successfully!")
+        
+        except sql.Error as error:
+            return ("Error", error)
+        
+    
+    def updateAttemptAll(self, tbName:str, value:str):
+        try:
+            self.query.execute(f"UPDATE {tbName} SET attempted = %s", (value,))
+            self.myDB.commit()
+            return ("Success", "Status updated successfully!")
         
         except sql.Error as error:
             return ("Error", error)
@@ -140,6 +153,18 @@ class Database:
 
         except sql.Error as error:
             return ("Error", error)
+        
+
+    def fetchQandA(self, quizTable:str, resultTable:str, uName:str):
+        try:
+            self.query.execute(f"SELECT qname, answer FROM {quizTable}")
+            data1 = self.query.fetchall()
+            self.query.execute(f"SELECT answers FROM {resultTable} WHERE BINARY name = BINARY %s", (uName,))
+            data2 = self.query.fetchall()
+            return ("Success", (data1, data2))
+
+        except sql.Error as error:
+            return ("Error", error)
 
 
 
@@ -153,6 +178,26 @@ class Database:
         except sql.Error as error:
             return ("Error", error)
         
+
+    def delResultByName(self, tbName:str, uName:str):
+        try:
+            self.query.execute(f"DELETE FROM {tbName} WHERE BINARY name = BINARY %s", (uName,))
+            self.myDB.commit()
+            return ("Success", "Total Record deleted: " + str(self.query.rowcount))
+
+        except sql.Error as error:
+            return ("Error", error)
+
+
+    # ========================== TRUNCATE QUERIES ============================ #
+    def clearTable(self, tbName:str):
+        try:
+            self.query.execute(f"TRUNCATE {tbName}")
+            self.myDB.commit()
+            return ("Success", "Total Record deleted: " + str(self.query.rowcount))
+
+        except sql.Error as error:
+            return ("Error", error)
 
     
     def disconnect(self):
