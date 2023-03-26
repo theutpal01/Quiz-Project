@@ -414,7 +414,7 @@ class App(tk.Tk):
 
         tableFrame = tk.Frame(win, background=P_COL)
         columns = ('Question', 'Your Answer', 'Correct Answer')
-        info = self.database.connect()
+        info = controller.database.connect()
             
         if info[0] == "Success":
             info = controller.database.fetchQandA(QUIZ_TABLE, RESULT_TABLE, name)
