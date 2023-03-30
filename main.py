@@ -244,6 +244,9 @@ class App(tk.Tk):
 
     def saveQuest(self, data):
         canSave = True
+        availUsers = True
+        doChange = True
+
         for i in data:
             if len(i) == 0 or i.isspace():
                 canSave = False
@@ -252,15 +255,22 @@ class App(tk.Tk):
             info = self.database.connect()
             
             if info[0] == "Success":
-                if self.box.showOkBox("Alert", "Saving the question will clear the users data who have attempted the quiz till now!"):
+
+                info = self.database.fetchUsers(RESULT_TABLE)
+                availUsers = False if info[0] != "Success" else True
+
+                if availUsers:
+                    doChange = self.box.showOkBox("Alert", "Saving the question will clear the users data who have attempted the quiz till now!")
+        
+                if doChange:
                     info = self.database.saveQuests(QUIZ_TABLE, data)
-                    if info[0] == "Succes":
+                    if info[0] == "Success":
                         if self.database.clearTable(RESULT_TABLE)[0] == "Success":
                             info = self.database.updateAttemptAll(AUTH_TABLE, 0)
                             if info[0] == "Success":
                                 self.box.showBox("Info", "Questions added successfully.", "i")
                                 self.showQuizDetails()
-            
+        
             else:
                 self.box.showBox("Error", "Something went wrong! Please restart the program.", "e")
         
@@ -270,6 +280,9 @@ class App(tk.Tk):
     
     def saveQuestMultiple(self, values):
         canSave = True
+        availUsers = True
+        doChange = True
+
         for value in values:
             for i in value:
                 if len(i) == 0 or i.isspace():
@@ -279,7 +292,12 @@ class App(tk.Tk):
             info = self.database.connect()
             
             if info[0] == "Success":
-                if self.box.showOkBox("Alert", "Saving the questions will clear the users data who have attempted the quiz till now!"):
+                availUsers = False if info[0] != "Success" else True
+
+                if availUsers:
+                    doChange = self.box.showOkBox("Alert", "Saving the questions will clear the users data who have attempted the quiz till now!")
+        
+                if doChange:
                     info = self.database.saveQuests(QUIZ_TABLE, values, True)
                     if info[0] == "Success":
                         if self.database.clearTable(RESULT_TABLE)[0] == "Success":
@@ -335,6 +353,7 @@ class App(tk.Tk):
                     info = tuple(enumerate(info)) if len(info) != 0 else ()
                     if len(info) != 0:
                         QuizFrame.initData(self.frames.get("quiz"), info)
+                        self.frames.get("quiz").focus_set()
                         self.showFrame("quiz")
                     else:
                         self.box.showBox("Info", "No Quiz for the time being.", "i")

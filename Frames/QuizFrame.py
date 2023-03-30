@@ -15,11 +15,12 @@ class QuizFrame(tk.Frame):
         self.answer = tk.StringVar(self, "     ")
 
         leftFrame = tk.Frame(self, background=P_COL)
-        prevBtn = tk.Button(leftFrame, text="<", font=(FONT_FAM, FONT_SIZE), padx=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
-        prevBtn.pack(fill=tk.Y, expand=True)
-        prevBtn.bind('<ButtonRelease-1>', self.updateIndex)
-        prevBtn.bind('<Enter>', controller.hoverBtn)
-        prevBtn.bind('<Leave>', controller.unhoverBtn)
+        self.prevBtn = tk.Button(leftFrame, text="<", font=(FONT_FAM, FONT_SIZE), padx=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
+        self.prevBtn.pack(fill=tk.Y, expand=True)
+        self.prevBtn.bind('<ButtonRelease-1>', self.updateIndex)
+        self.bind('<KeyRelease-Left>', self.updateIndex)
+        self.prevBtn.bind('<Enter>', controller.hoverBtn)
+        self.prevBtn.bind('<Leave>', controller.unhoverBtn)
         leftFrame.pack(side=tk.LEFT, anchor=tk.W, fill=tk.Y)
         
 
@@ -48,11 +49,12 @@ class QuizFrame(tk.Frame):
         middleFrame.pack(side=tk.LEFT, anchor=tk.CENTER, fill=tk.BOTH, expand=True)
           
         rightFrame = tk.Frame(self, background=P_COL)
-        nextBtn = tk.Button(rightFrame, text=">", font=(FONT_FAM, FONT_SIZE), padx=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
-        nextBtn.pack(fill=tk.Y, expand=True)
-        nextBtn.bind('<ButtonRelease-1>', self.updateIndex)
-        nextBtn.bind('<Enter>', controller.hoverBtn)
-        nextBtn.bind('<Leave>', controller.unhoverBtn)
+        self.nextBtn = tk.Button(rightFrame, text=">", font=(FONT_FAM, FONT_SIZE), padx=5, background=S_COL, foreground=TXT_COL, relief=tk.FLAT, bd=0)
+        self.nextBtn.pack(fill=tk.Y, expand=True)
+        self.nextBtn.bind('<ButtonRelease-1>', self.updateIndex)
+        self.bind('<KeyRelease-Right>', self.updateIndex)
+        self.nextBtn.bind('<Enter>', controller.hoverBtn)
+        self.nextBtn.bind('<Leave>', controller.unhoverBtn)
         rightFrame.pack(side=tk.RIGHT, anchor=tk.E, fill=tk.Y)
 
 
@@ -66,13 +68,23 @@ class QuizFrame(tk.Frame):
 
 
     def updateIndex(self, event):
-        if event.widget['state'] == "active":
-            if event.widget["text"] == "<" and QuizFrame.index > 0:
+        if event.state == 16:
+            if event.keysym == "Left" and self.prevBtn.cget("state") == "normal" and QuizFrame.index > 0:
                 QuizFrame.index -= 1
-            elif event.widget["text"] == ">" and QuizFrame.index < QuizFrame.maxLen:
+
+            elif event.keysym == "Right" and self.nextBtn.cget("state") == "normal" and QuizFrame.index < QuizFrame.maxLen:
                 QuizFrame.index += 1
-            self.answer.set("    ")
-            self.setData(QuizFrame.data[QuizFrame.index][1])
+        
+
+        elif event.state == 272:
+            if event.widget['state'] == "active":
+                if event.widget["text"] == "<" and QuizFrame.index > 0:
+                    QuizFrame.index -= 1
+                elif event.widget["text"] == ">" and QuizFrame.index < QuizFrame.maxLen:
+                    QuizFrame.index += 1
+        self.answer.set("    ")
+        self.setData(QuizFrame.data[QuizFrame.index][1])
+        self.focus_set()
 
 
     def updateAnswer(self):
@@ -145,6 +157,7 @@ class QuizFrame(tk.Frame):
         if len(QuizFrame.uAnswers) < len(QuizFrame.data):
             if controller.box.showYesNoBox("Want to continue?", "All the questions are not answered! Do you wish to continue?"):
                 controller.quizComplete(QuizFrame.uAnswers, score, percentage, grade)
+            else: self.focus_set()
         else:
             controller.box.showBox("Info", "All the questions are answered! Quiz has been submitted.", "i")
             controller.quizComplete(QuizFrame.uAnswers, score, percentage, grade)

@@ -183,11 +183,21 @@ class QuizManageFrame(tk.Frame):
         selected = self.listView.curselection()
         selected = selected[0] if len(selected) != 0 else None
 
+        availUsers = True
+        doChange = True
+
         if selected is not None:
             qName = QuizManageFrame.quests[selected][1]
             info = controller.database.connect()
             if info[0] == "Success":
-                if controller.box.showYesNoBox("Want to continue?", "Deleting a question will clear the data of users who have gven the quiz. Do you wish to continue?"):
+                
+                info = controller.database.fetchUsers(RESULT_TABLE)
+                availUsers = False if info[0] != "Success" else True
+
+                if availUsers:
+                    doChange = controller.box.showYesNoBox("Want to continue?", "Deleting a question will clear the data of users who have gven the quiz. Do you wish to continue?")
+        
+                if doChange:
                     info = controller.database.delQuestByName(QUIZ_TABLE, qName)            
                     if info[0] == "Success":
                         if controller.database.clearTable(RESULT_TABLE)[0] == "Success":
